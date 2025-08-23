@@ -67,3 +67,6 @@ p {
   max-height: 90vh;
   box-shadow: 0 0 20px #fff;
 }
+#overlay {
+  overflow: auto;
+}

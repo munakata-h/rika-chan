@@ -49,3 +49,21 @@ p {
     grid-template-columns: repeat(4, 1fr);
   }
 }
+/* 全画面表示の背景 */
+#overlay {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100vw; height: 100vh;
+  background: rgba(0,0,0,0.8);
+  display: none;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
+
+/* 拡大画像 */
+#overlay img {
+  max-width: 90vw;
+  max-height: 90vh;
+  box-shadow: 0 0 20px #fff;
+}

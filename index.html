@@ -66,7 +66,7 @@
          <img src="055.jpg" alt="No.A0">
          <img src="056.jpg" alt="No.A0">
          <img src="057.jpg" alt="No.A057">
-    <div id="overlay"><img src="" alt=""></div>
+<div id="overlay"><img src="" alt=""></div>
 
 <script>
   const overlay = document.getElementById('overlay');
@@ -75,7 +75,15 @@
   document.querySelectorAll('.gallery img').forEach(img => {
     img.addEventListener('click', () => {
       overlayImg.src = img.src;
-      overlay.style.display = 'flex';
+
+      // 一時的に画像を読み込んでサイズ取得
+      const tempImg = new Image();
+      tempImg.src = img.src;
+      tempImg.onload = () => {
+        overlayImg.style.width = tempImg.width * 2 + 'px';
+        overlayImg.style.height = 'auto'; // 高さは自動調整
+        overlay.style.display = 'flex';
+      };
     });
   });
 
@@ -83,6 +91,7 @@
     overlay.style.display = 'none';
   });
 </script>
+
 
   </div>
 </body>

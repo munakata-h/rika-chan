@@ -66,6 +66,24 @@
          <img src="055.jpg" alt="No.A0">
          <img src="056.jpg" alt="No.A0">
          <img src="057.jpg" alt="No.A057">
+    <div id="overlay"><img src="" alt=""></div>
+
+<script>
+  const overlay = document.getElementById('overlay');
+  const overlayImg = overlay.querySelector('img');
+
+  document.querySelectorAll('.gallery img').forEach(img => {
+    img.addEventListener('click', () => {
+      overlayImg.src = img.src;
+      overlay.style.display = 'flex';
+    });
+  });
+
+  overlay.addEventListener('click', () => {
+    overlay.style.display = 'none';
+  });
+</script>
+
   </div>
 </body>
 </html>

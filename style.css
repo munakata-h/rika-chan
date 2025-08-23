@@ -9,15 +9,18 @@ body {
 h1 {
   color: #d16ba5;
   margin-bottom: 30px;
+  font-size: 48px;
 }
-
+p {
+  font-size: 24px; /* ← ここを追加 */
+  margin-bottom: 20px;
+}
 .gallery {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
   gap: 15px;
   padding: 10px;
 }
-
 .gallery img {
   width: 100%;
   height: auto;
@@ -26,23 +29,19 @@ h1 {
   box-shadow: 0 4px 8px rgba(0,0,0,0.2);
   transition: transform 0.3s;
 }
-
 .gallery img:hover {
   transform: scale(1.05);
 }
-
 @media (max-width: 600px) {
   .gallery {
     grid-template-columns: repeat(2, 1fr);
   }
 }
-
 @media (min-width: 601px) and (max-width: 1024px) {
   .gallery {
     grid-template-columns: repeat(3, 1fr);
   }
 }
-
 @media (min-width: 1025px) {
   .gallery {
     grid-template-columns: repeat(4, 1fr);

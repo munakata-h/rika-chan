@@ -12,12 +12,12 @@ body {
 h1 {
   color: #d16ba5;
   margin-bottom: 30px;
-  font-size: 48px;
+  font-size: 60px;
   text-shadow: 2px 2px 4px rgba(209, 107, 165, 0.3);
   letter-spacing: 2px;
 }
 p {
-  font-size: 32px; 
+  font-size: 48px; 
   margin-bottom: 20px;
 }
 .gallery {

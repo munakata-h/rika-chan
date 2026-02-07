@@ -5,7 +5,7 @@
   <title>リカちゃんギャラリー</title>
   <link rel="stylesheet" href="style.css">
   <style>
-    /* 写真の並び設定（比率維持・顔が切れない設定） */
+    /* 写真の並び設定 */
     #gallery {
       display: flex;
       flex-wrap: wrap;
@@ -21,27 +21,29 @@
       box-shadow: 0 2px 5px rgba(0,0,0,0.1);
     }
 
-    /* ページネーションボタンを大きく使いやすくする設定 */
+    /* ページネーションボタンをさらに巨大化 */
     #pagination {
       text-align: center;
-      margin: 40px 0; /* 上下の余白を広げました */
+      margin: 60px 0; /* 上下の余白をさらにたっぷり確保 */
     }
     #pagination button {
-      margin: 0 10px;      /* ボタン同士の間隔を広げました */
-      padding: 15px 25px;  /* ボタン自体のサイズを大きくしました */
-      font-size: 22px;     /* 数字を大きくしました */
+      margin: 15px;        /* ボタン同士をしっかり離しました */
+      padding: 25px 50px;  /* ボタンの面積を前回の約2倍に拡大 */
+      font-size: 32px;     /* 数字もさらに巨大化（視認性アップ） */
       font-weight: bold;
       cursor: pointer;
-      border: 1px solid #ccc;
-      border-radius: 8px;  /* 角を少し丸くしてボタンらしく */
+      border: 2px solid #ccc; /* 枠線を少し太くしました */
+      border-radius: 15px;    /* 角をもっと丸くして優しい印象に */
       background-color: #fff;
-      transition: 0.3s;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1); /* 押しやすそうな立体感を追加 */
+      transition: 0.2s;
     }
-    /* 現在のページのボタンを目立たせる */
+    /* 現在のページのボタン（特大ピンク） */
     #pagination button.active {
-      background-color: #ffb6c1; /* 可愛いピンク色に変更 */
+      background-color: #ffb6c1; 
       color: white;
       border-color: #ffb6c1;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
     }
   </style>
 </head>
@@ -100,7 +102,6 @@
         const btn = document.createElement('button');
         btn.innerText = i;
         
-        // 現在のページにクラスを追加して目立たせる
         if (i === currentPage) {
           btn.className = 'active';
         }
@@ -108,7 +109,7 @@
         btn.addEventListener('click', () => {
           currentPage = i;
           displayGallery(currentPage);
-          window.scrollTo(0, 0);
+          window.scrollTo(0, 0); // ページ切り替え時に一番上に戻る
         });
         pagination.appendChild(btn);
       }

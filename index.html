@@ -6,45 +6,13 @@
   <link rel="stylesheet" href="style.css">
   <style>
     /* 写真の並び設定 */
-    #gallery {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 15px;
-      justify-content: center;
-      align-items: flex-start;
-    }
-    #gallery img {
-      max-width: 250px; 
-      height: auto;
-      cursor: pointer;
-      border-radius: 5px;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-    }
+    #gallery { display: flex; flex-wrap: wrap; gap: 15px; justify-content: center; align-items: flex-start; }
+    #gallery img { max-width: 250px; height: auto; cursor: pointer; border-radius: 5px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
 
-    /* ページネーションボタンをさらに巨大化 */
-    #pagination {
-      text-align: center;
-      margin: 60px 0; /* 上下の余白をさらにたっぷり確保 */
-    }
-    #pagination button {
-      margin: 15px;        /* ボタン同士をしっかり離しました */
-      padding: 25px 50px;  /* ボタンの面積を前回の約2倍に拡大 */
-      font-size: 32px;     /* 数字もさらに巨大化（視認性アップ） */
-      font-weight: bold;
-      cursor: pointer;
-      border: 2px solid #ccc; /* 枠線を少し太くしました */
-      border-radius: 15px;    /* 角をもっと丸くして優しい印象に */
-      background-color: #fff;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.1); /* 押しやすそうな立体感を追加 */
-      transition: 0.2s;
-    }
-    /* 現在のページのボタン（特大ピンク） */
-    #pagination button.active {
-      background-color: #ffb6c1; 
-      color: white;
-      border-color: #ffb6c1;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-    }
+    /* 特大ボタン設定 */
+    #pagination { text-align: center; margin: 60px 0; }
+    #pagination button { margin: 15px; padding: 25px 50px; font-size: 32px; font-weight: bold; cursor: pointer; border: 2px solid #ccc; border-radius: 15px; background-color: #fff; box-shadow: 0 4px 10px rgba(0,0,0,0.1); transition: 0.2s; }
+    #pagination button.active { background-color: #ffb6c1; color: white; border-color: #ffb6c1; }
   </style>
 </head>
 <body>
@@ -55,33 +23,50 @@
   <div id="gallery"></div>
   <div id="pagination"></div>
 
-  <div id="overlay">
-    <img src="" alt="拡大画像">
-  </div>
+  <div id="overlay"><img src="" alt="拡大画像"></div>
 
   <script>
-    // --- 設定エリア ---
-    const totalImages = 57;   
-    const imagesPerPage = 30; 
+    // --- あなたのGitHub情報に合わせて設定してください ---
+    const username = "munakata-h"; // あなたのユーザー名
+    const repo = "rika-chan";      // あなたのリポジトリ名
+    
+    const imagesPerPage = 30;
     let currentPage = 1;
+    let allImageFiles = [];
 
     const gallery = document.getElementById('gallery');
     const pagination = document.getElementById('pagination');
     const overlay = document.getElementById('overlay');
     const overlayImg = overlay.querySelector('img');
 
+    // 1. GitHubからファイル一覧を自動取得する
+    async function fetchImageList() {
+      gallery.innerHTML = '<p style="font-size:24px;">写真を準備しています...</p>';
+      try {
+        const response = await fetch(`https://api.github.com/repos/${username}/${repo}/contents/`);
+        const data = await response.json();
+        
+        // 画像ファイル（jpg, JPG, png等）だけを抽出して名前順に並べる
+        allImageFiles = data
+          .filter(file => file.name.match(/\.(jpg|jpeg|png|gif)$/i))
+          .map(file => file.name)
+          .sort(); // ここで昇順に並べ替えます
+
+        displayGallery(currentPage);
+      } catch (e) {
+        gallery.innerHTML = '<p>読み込みに失敗しました。時間をおいて試してください。</p>';
+      }
+    }
+
+    // 2. ギャラリーを表示する
     function displayGallery(page) {
       gallery.innerHTML = '';
-      const start = (page - 1) * imagesPerPage + 1;
-      const end = Math.min(page * imagesPerPage, totalImages);
+      const start = (page - 1) * imagesPerPage;
+      const end = Math.min(start + imagesPerPage, allImageFiles.length);
 
-      for (let i = start; i <= end; i++) {
+      for (let i = start; i < end; i++) {
         const img = document.createElement('img');
-        const fileName = i.toString().padStart(3, '0') + '.jpg';
-        
-        img.src = fileName;
-        img.alt = "Gallery Image " + i;
-
+        img.src = allImageFiles[i];
         img.addEventListener('click', () => {
           overlayImg.src = img.src;
           overlay.style.display = 'flex';
@@ -94,33 +79,27 @@
       setupPagination();
     }
 
+    // 3. ページボタンを作成する
     function setupPagination() {
       pagination.innerHTML = '';
-      const pageCount = Math.ceil(totalImages / imagesPerPage);
-
+      const pageCount = Math.ceil(allImageFiles.length / imagesPerPage);
       for (let i = 1; i <= pageCount; i++) {
         const btn = document.createElement('button');
         btn.innerText = i;
-        
-        if (i === currentPage) {
-          btn.className = 'active';
-        }
-
+        if (i === currentPage) btn.className = 'active';
         btn.addEventListener('click', () => {
           currentPage = i;
           displayGallery(currentPage);
-          window.scrollTo(0, 0); // ページ切り替え時に一番上に戻る
+          window.scrollTo(0, 0);
         });
         pagination.appendChild(btn);
       }
     }
 
-    displayGallery(currentPage);
+    // 最初にリスト取得を開始
+    fetchImageList();
 
-    overlay.addEventListener('click', () => {
-      overlay.style.display = 'none';
-    });
+    overlay.addEventListener('click', () => { overlay.style.display = 'none'; });
   </script>
-
 </body>
 </html>

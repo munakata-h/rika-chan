@@ -5,23 +5,24 @@
   <title>リカちゃんギャラリー</title>
   <link rel="stylesheet" href="style.css">
   <style>
-    /* 写真の並びとサイズを整える */
+    /* 写真をそのままの形で並べる設定 */
     #gallery {
       display: flex;
       flex-wrap: wrap;
-      gap: 10px;
+      gap: 15px; /* 写真の間の隙間 */
       justify-content: center;
+      align-items: flex-start; /* 縦のラインを揃えず自然に並べる */
     }
     #gallery img {
-      width: 200px; 
-      height: 150px;
-      object-fit: cover;
+      max-width: 250px; /* 横幅の最大サイズ（お好みで調整してください） */
+      height: auto;     /* 縦は写真に合わせて自動調整（これで切れません） */
       cursor: pointer;
       border-radius: 5px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
     }
     #pagination {
       text-align: center;
-      margin: 20px 0;
+      margin: 30px 0;
     }
     #pagination button {
       margin: 0 5px;
@@ -45,8 +46,8 @@
 
   <script>
     // --- 設定エリア ---
-    const totalImages = 57;   // 現在の合計枚数（追加したらここを増やすだけ！）
-    const imagesPerPage = 30; // 1ページ30枚
+    const totalImages = 57;   
+    const imagesPerPage = 30; 
     let currentPage = 1;
 
     const gallery = document.getElementById('gallery');
@@ -70,10 +71,9 @@
         img.addEventListener('click', () => {
           overlayImg.src = img.src;
           overlay.style.display = 'flex';
-          // 拡大画像の設定
           overlayImg.style.width = 'auto';
-          overlayImg.style.maxWidth = '90%';
-          overlayImg.style.maxHeight = '90%';
+          overlayImg.style.maxWidth = '95%';
+          overlayImg.style.maxHeight = '95%';
         });
         gallery.appendChild(img);
       }
@@ -100,10 +100,8 @@
       }
     }
 
-    // 初回表示
     displayGallery(currentPage);
 
-    // 拡大画面を閉じる
     overlay.addEventListener('click', () => {
       overlay.style.display = 'none';
     });

@@ -6,89 +6,117 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
+
   <h1>りかちゃんギャラリー</h1>
   <p>はなの手作りドレス</p>
-  
-  <div id="gallery" class="gallery"></div>
 
-  <div id="pagination" style="text-align: center; margin: 20px;"></div>
+  <div id="gallery"></div>
+  <div id="pagination"></div>
 
-  <div id="overlay"><img src="" alt=""></div>
+  <div id="overlay">
+    <img src="" alt="拡大画像">
+  </div>
 
-<script>
-  // --- 設定エリア ---
-  const totalImages = 57; // 写真の総枚数（増えたらここを変えるだけ！）
-  const imagesPerPage = 30; // 1ページに表示する枚数
-  let currentPage = 1;
+  <script>
+    // --- 設定エリア ---
+    const maxImageNumber = 100; // チェックする最大番号（将来を見越して多めでOK）
+    const imagesPerPage = 30;   // 1ページに表示したい「成功」枚数
+    let currentPage = 1;
 
-  const gallery = document.getElementById('gallery');
-  const pagination = document.getElementById('pagination');
-  const overlay = document.getElementById('overlay');
-  const overlayImg = overlay.querySelector('img');
+    const gallery = document.getElementById('gallery');
+    const pagination = document.getElementById('pagination');
+    const overlay = document.getElementById('overlay');
+    const overlayImg = overlay.querySelector('img');
 
-  // ギャラリーを表示する関数
-  function displayGallery(page) {
-    gallery.innerHTML = '';
-    const start = (page - 1) * imagesPerPage + 1;
-    const end = Math.min(page * imagesPerPage, totalImages);
+    // 画像の拡張子（JPGかjpgか）を判定する関数
+    function getFileName(num) {
+      const isLargeJPG = [14, 24, 47, 54, 55, 56, 57].includes(num);
+      const ext = isLargeJPG ? 'JPG' : 'jpg';
+      return num.toString().padStart(3, '0') + '.' + ext;
+    }
 
-    for (let i = start; i <= end; i++) {
-      // 5番をスキップしたい場合などの処理
-      if (i === 5) continue; 
+    async function displayGallery(page) {
+      gallery.innerHTML = '<p id="loading">読み込み中...</p>';
+      let displayCount = 0; 
+      let skipCount = 0;    
+      const targetStart = (page - 1) * imagesPerPage;
 
-      const img = document.createElement('img');
-      // 数値を3桁（001形式）に変換。JPGとjpgが混在する場合は注意が必要
-      // ここでは基本.jpg、14/24/47/54-57等をJPGとする例
-      const ext = [14, 24, 47, 54, 55, 56, 57].includes(i) ? 'JPG' : 'jpg';
-      const fileName = i.toString().padStart(3, '0') + '.' + ext;
+      const fragment = document.createDocumentFragment();
       
-      img.src = fileName;
-      img.addEventListener('click', () => {
-        overlayImg.src = img.src;
-        const tempImg = new Image();
-        tempImg.src = img.src;
-        tempImg.onload = () => {
-          overlayImg.style.width = tempImg.width * 2 + 'px';
-          overlayImg.style.height = 'auto';
-          overlay.style.display = 'flex';
-        };
-      });
-      gallery.appendChild(img);
-    }
-    setupPagination();
-  }
+      // 1番から順に存在する画像を探す
+      for (let i = 1; i <= maxImageNumber; i++) {
+        if (displayCount >= imagesPerPage) break;
 
-  // ページ移動ボタンを作る関数
-  function setupPagination() {
-    pagination.innerHTML = '';
-    const pageCount = Math.ceil(totalImages / imagesPerPage);
+        const fileName = getFileName(i);
+        
+        // 画像が存在するかチェック
+        const exists = await new Promise((resolve) => {
+          const imgCheck = new Image();
+          imgCheck.src = fileName;
+          imgCheck.onload = () => resolve(true);
+          imgCheck.onerror = () => resolve(false);
+        });
 
-    for (let i = 1; i <= pageCount; i++) {
-      const btn = document.createElement('button');
-      btn.innerText = i;
-      btn.style.margin = "0 5px";
-      btn.style.padding = "5px 10px";
-      btn.style.cursor = "pointer";
-      if (i === currentPage) {
-        btn.style.backgroundColor = "#ccc"; // 現在のページを分かりやすく
+        if (exists) {
+          if (skipCount >= targetStart) {
+            const img = document.createElement('img');
+            img.src = fileName;
+            img.alt = `Photo ${i}`;
+            img.addEventListener('click', () => {
+              overlayImg.src = img.src;
+              const tempImg = new Image();
+              tempImg.src = img.src;
+              tempImg.onload = () => {
+                overlayImg.style.width = tempImg.width * 2 + 'px';
+                overlayImg.style.height = 'auto';
+                overlay.style.display = 'flex';
+              };
+            });
+            fragment.appendChild(img);
+            displayCount++;
+          } else {
+            skipCount++;
+          }
+        }
       }
-      btn.addEventListener('click', () => {
-        currentPage = i;
-        displayGallery(currentPage);
-        window.scrollTo(0, 0); // ページ切り替え時に上に戻る
-      });
-      pagination.appendChild(btn);
+
+      gallery.innerHTML = '';
+      gallery.appendChild(fragment);
+      setupPagination();
     }
-  }
 
-  // 初回表示
-  displayGallery(currentPage);
+    function setupPagination() {
+      pagination.innerHTML = '';
+      // 57枚程度なら2ページ、増えてきたらここを調整します
+      const totalApproxPages = 2; 
 
-  // オーバーレイを閉じる処理
-  overlay.addEventListener('click', () => {
-    overlay.style.display = 'none';
-  });
-</script>
+      for (let i = 1; i <= totalApproxPages; i++) {
+        const btn = document.createElement('button');
+        btn.innerText = i;
+        btn.style.margin = "0 5px";
+        btn.style.padding = "8px 15px";
+        btn.style.fontSize = "16px";
+        btn.style.cursor = "pointer";
+        if (i === currentPage) {
+          btn.style.backgroundColor = "#ddd";
+          btn.style.fontWeight = "bold";
+        }
+        btn.addEventListener('click', () => {
+          if (currentPage === i) return;
+          currentPage = i;
+          displayGallery(currentPage);
+          window.scrollTo(0, 0);
+        });
+        pagination.appendChild(btn);
+      }
+    }
+
+    displayGallery(currentPage);
+
+    overlay.addEventListener('click', () => {
+      overlay.style.display = 'none';
+    });
+  </script>
 
 </body>
 </html>

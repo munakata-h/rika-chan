@@ -5,30 +5,43 @@
   <title>リカちゃんギャラリー</title>
   <link rel="stylesheet" href="style.css">
   <style>
-    /* 写真をそのままの形で並べる設定 */
+    /* 写真の並び設定（比率維持・顔が切れない設定） */
     #gallery {
       display: flex;
       flex-wrap: wrap;
-      gap: 15px; /* 写真の間の隙間 */
+      gap: 15px;
       justify-content: center;
-      align-items: flex-start; /* 縦のラインを揃えず自然に並べる */
+      align-items: flex-start;
     }
     #gallery img {
-      max-width: 250px; /* 横幅の最大サイズ（お好みで調整してください） */
-      height: auto;     /* 縦は写真に合わせて自動調整（これで切れません） */
+      max-width: 250px; 
+      height: auto;
       cursor: pointer;
       border-radius: 5px;
       box-shadow: 0 2px 5px rgba(0,0,0,0.1);
     }
+
+    /* ページネーションボタンを大きく使いやすくする設定 */
     #pagination {
       text-align: center;
-      margin: 30px 0;
+      margin: 40px 0; /* 上下の余白を広げました */
     }
     #pagination button {
-      margin: 0 5px;
-      padding: 10px 20px;
-      font-size: 18px;
+      margin: 0 10px;      /* ボタン同士の間隔を広げました */
+      padding: 15px 25px;  /* ボタン自体のサイズを大きくしました */
+      font-size: 22px;     /* 数字を大きくしました */
+      font-weight: bold;
       cursor: pointer;
+      border: 1px solid #ccc;
+      border-radius: 8px;  /* 角を少し丸くしてボタンらしく */
+      background-color: #fff;
+      transition: 0.3s;
+    }
+    /* 現在のページのボタンを目立たせる */
+    #pagination button.active {
+      background-color: #ffb6c1; /* 可愛いピンク色に変更 */
+      color: white;
+      border-color: #ffb6c1;
     }
   </style>
 </head>
@@ -62,7 +75,6 @@
 
       for (let i = start; i <= end; i++) {
         const img = document.createElement('img');
-        // 全て小文字の .jpg で統一
         const fileName = i.toString().padStart(3, '0') + '.jpg';
         
         img.src = fileName;
@@ -87,10 +99,12 @@
       for (let i = 1; i <= pageCount; i++) {
         const btn = document.createElement('button');
         btn.innerText = i;
+        
+        // 現在のページにクラスを追加して目立たせる
         if (i === currentPage) {
-          btn.style.backgroundColor = "#ccc";
-          btn.style.fontWeight = "bold";
+          btn.className = 'active';
         }
+
         btn.addEventListener('click', () => {
           currentPage = i;
           displayGallery(currentPage);

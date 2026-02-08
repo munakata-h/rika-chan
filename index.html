@@ -66,7 +66,7 @@
 
       for (let i = start; i < end; i++) {
         const img = document.createElement('img');
-        img.src = allImageFiles[i];
+        img.src = `https://raw.githubusercontent.com/${username}/${repo}/main/${allImageFiles[i]}`;
         img.addEventListener('click', () => {
           overlayImg.src = img.src;
           overlay.style.display = 'flex';

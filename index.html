@@ -102,4 +102,15 @@
     overlay.addEventListener('click', () => { overlay.style.display = 'none'; });
   </script>
 </body>
+
+<script data-goatcounter="https://muna-home.goatcounter.com/count"
+        async src="//gc.zgo.at/count.js"></script>
+
+<script>
+  fetch('https://muna-home.goatcounter.com/counter/' + encodeURIComponent(location.pathname) + '.json')
+    .then(r => r.json())
+    .then(d => { document.getElementById('view-count').textContent = d.count; })
+    .catch(() => {});
+</script>
+  
 </html>
